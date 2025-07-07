@@ -8,7 +8,7 @@ pygame.init()
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BOARD_COLOR = (188, 122, 66)
-TEXT_COLOR = (255, 0, 0)
+TEXT_COLOR = (245, 245, 245)
 
 BOARD_SIZE = 16
 CELL_SIZE = 40
@@ -72,7 +72,7 @@ def draw_board():
 
 def show_status(text):
     font = pygame.font.Font(FONT_PATH, 36)
-    text_surface = font.render(text, True, TEXT_COLOR)
+    text_surface = font.render(text, True, BLACK if current_player == 'Black' else WHITE)
     text_rect = text_surface.get_rect(center=(WIDTH // 2, (TOP+MARGIN) // 2))
     screen.blit(text_surface, text_rect)
 
@@ -84,15 +84,15 @@ def show_winner_popup(winner):
     popup_width = 400
     popup_height = 200
     popup_rect = pygame.Rect((WIDTH - popup_width) // 2, (HEIGHT - popup_height) // 2, popup_width, popup_height)
-    pygame.draw.rect(screen, WHITE, popup_rect)
+    pygame.draw.rect(screen, (52, 95, 161, 0), popup_rect)
 
-    font = pygame.font.Font(FONT_PATH, 36)
-    test = font.render(f"{winner} HAS WON!", True, TEXT_COLOR)
+    font = pygame.font.Font(FONT_PATH, 40)
+    test = font.render(f"{winner} HAS WON!", True, BLACK if current_player == 'Black' else WHITE)
     text_rect = test.get_rect(center=popup_rect.center)
     screen.blit(test, text_rect)
 
-    small_font = pygame.font.Font(FONT_PATH, 24)
-    tip_text = small_font.render("PLS Press any Botton to Restart", True, TEXT_COLOR)
+    small_font = pygame.font.Font(FONT_PATH, 20)
+    tip_text = small_font.render("PLS Press any Botton to Restart", True, BLACK if current_player == 'Black' else WHITE)
     tip_text_rect = tip_text.get_rect(center=(WIDTH // 2, popup_rect.bottom - 30))
     screen.blit(tip_text, tip_text_rect)
 
@@ -131,7 +131,7 @@ while True:
     draw_board()
     player = get_player(current_player)
     if game_over:
-        show_status(f"GAME OVER - {player} HAS WON!")
+        show_status("GAME OVER")
         show_winner_popup(player)
     else:
         show_status(f"{player}'s Turn")
