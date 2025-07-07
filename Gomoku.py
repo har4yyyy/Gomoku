@@ -10,11 +10,13 @@ WHITE = (255, 255, 255)
 BOARD_COLOR = (188, 122, 66)
 TEXT_COLOR = (255, 0, 0)
 
-BOARD_SIZE = 15
+BOARD_SIZE = 16
 CELL_SIZE = 40
-MARGIN = 16
-WIDTH = HEIGHT = BOARD_SIZE * CELL_SIZE + 2 * MARGIN
-VALID_RADIUS = 20
+MARGIN = 22
+TOP = 50
+HEIGHT = (BOARD_SIZE-1) * CELL_SIZE + 2 * MARGIN + TOP
+WIDTH = (BOARD_SIZE-1) * CELL_SIZE + 2 * MARGIN
+VALID_RADIUS = 16
 
 FONT_PATH = os.path.join(os.path.dirname(__file__), 'font.ttf')
 if not os.path.exists(FONT_PATH):
@@ -31,7 +33,7 @@ current_player = 'Black'
 game_over = False
 
 # Functions
-def get_chinese_player(player):
+def get_player(player):
     return 'BLACK' if player == 'Black' else 'WHITE'
 
 def check_winner(rol, col, player):
@@ -54,24 +56,24 @@ def draw_board():
     color = BLACK
 
     for i in range(BOARD_SIZE):
-        ver_start_pos = (MARGIN + i * CELL_SIZE, MARGIN)
+        ver_start_pos = (MARGIN + i * CELL_SIZE, MARGIN + TOP)
         ver_end_pos = (MARGIN + i * CELL_SIZE, HEIGHT - MARGIN)
         pygame.draw.line(screen, color, ver_start_pos, ver_end_pos)
-        hor_start_pos = (MARGIN, MARGIN + i * CELL_SIZE)
-        hor_end_pos = (WIDTH - MARGIN, MARGIN + i * CELL_SIZE)
+        hor_start_pos = (MARGIN, TOP + MARGIN + i * CELL_SIZE)
+        hor_end_pos = (WIDTH - MARGIN, TOP + MARGIN + i * CELL_SIZE)
         pygame.draw.line(screen, color, hor_start_pos, hor_end_pos)
 
     for row in range(BOARD_SIZE):
         for col in range(BOARD_SIZE):
             if board[row][col]:
                 color = BLACK if board[row][col] == 'Black' else WHITE
-                pos = (MARGIN + col * CELL_SIZE, MARGIN + row * CELL_SIZE)
-                pygame.draw.circle(screen, color, pos, CELL_SIZE // 2 - 2)
+                pos = (MARGIN + col * CELL_SIZE, TOP + MARGIN + row * CELL_SIZE)
+                pygame.draw.circle(screen, color, pos, CELL_SIZE // 2 - 3)
 
 def show_status(text):
     font = pygame.font.Font(FONT_PATH, 36)
     text_surface = font.render(text, True, TEXT_COLOR)
-    text_rect = text_surface.get_rect(center=(WIDTH // 2, MARGIN))
+    text_rect = text_surface.get_rect(center=(WIDTH // 2, (TOP+MARGIN) // 2))
     screen.blit(text_surface, text_rect)
 
 def show_winner_popup(winner):
@@ -91,7 +93,8 @@ def show_winner_popup(winner):
 
     small_font = pygame.font.Font(FONT_PATH, 24)
     tip_text = small_font.render("PLS Press any Botton to Restart", True, TEXT_COLOR)
-    screen.blit(tip_text, tip_text.get_rect(center = (WIDTH // 2, HEIGHT - MARGIN)))
+    tip_text_rect = tip_text.get_rect(center=(WIDTH // 2, popup_rect.bottom - 30))
+    screen.blit(tip_text, tip_text_rect)
 
 # Main loop
 while True:
@@ -107,10 +110,10 @@ while True:
             else:
                 x, y = event.pos
                 col = round((x - MARGIN) / CELL_SIZE)
-                row = round((y - MARGIN) / CELL_SIZE)
+                row = round((y - MARGIN - TOP) / CELL_SIZE)
 
                 cross_x = col * CELL_SIZE + MARGIN
-                cross_y = row * CELL_SIZE + MARGIN
+                cross_y = row * CELL_SIZE + MARGIN + TOP
 
                 dx = x - cross_x
                 dy = y - cross_y
@@ -126,10 +129,10 @@ while True:
                             current_player = 'White' if current_player == 'Black' else 'Black'
 
     draw_board()
-    chinese_player = get_chinese_player(current_player)
+    player = get_player(current_player)
     if game_over:
-        show_status(f"GAME OVER - {chinese_player} HAS WON!")
-        show_winner_popup(chinese_player)
+        show_status(f"GAME OVER - {player} HAS WON!")
+        show_winner_popup(player)
     else:
-        show_status(f"{chinese_player}'s Turn")
+        show_status(f"{player}'s Turn")
     pygame.display.flip()
