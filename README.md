@@ -17,4 +17,6 @@ Replace [`path_to_script`] with the actual file path to your game script.
 
 MIT – Feel free to use, modify, and contribute, just remember to give proper credit.
 
+---
+
 Enjoy building and playing Gomoku!
